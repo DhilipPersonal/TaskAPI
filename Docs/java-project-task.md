@@ -100,61 +100,71 @@ This file outlines all major tasks and sub-tasks required to implement the Task 
 - [x] Create startup scripts for local development
 
 ### Phase 1.5: Base Configuration
-- [ ] Configure CORS settings
-- [ ] Set up global exception handler
-- [ ] Configure Jackson for JSON serialization
-- [ ] Set up API versioning strategy
-- [ ] Configure rate limiting
+- [x] Configure CORS settings
+- [x] Set up global exception handler
+- [x] Configure Jackson for JSON serialization
+- [x] Set up API versioning strategy
+- [x] Configure rate limiting
 
 ## 2. Authentication & Authorization
-- Implement user registration (with email verification)
-- Enforce password strength policy
-- Integrate JWT authentication (access/refresh tokens)
-- Implement login/logout endpoints
-- Implement account lockout after failed attempts
-- Integrate optional OAuth2 (Google, GitHub, Microsoft)
-- Optional: Two-factor authentication (2FA)
-- Implement RBAC (Admin, Project Manager, Team Member, Guest)
-- Resource-level permission checks (tasks, projects)
+- [x] Implement user registration 
+- [x] Enforce password strength policy
+- [x] Integrate JWT authentication (access/refresh tokens)
+- [x] Implement login/logout endpoints
+- [x] Implement account lockout after failed attempts
+- [x] Integrate optional OAuth2 (Google, GitHub, Microsoft)
+- [x] Optional: Two-factor authentication (2FA)
+- [x] Implement RBAC (Admin, Project Manager, Team Member, Guest)
+- [x] Resource-level permission checks (tasks, projects)
 
 ## 3. User Management
-- User entity, repository, service, controller
-- CRUD endpoints for user profile
-- Change password & reset password flows
-- Admin-only delete user endpoint
-- Avatar upload support
-- Track last login, account status
-- User role management
+- [x] User entity, repository, service, controller
+- [x] CRUD endpoints for user profile
+- [x] Change password & reset password flows
+- [x] Admin-only delete user endpoint
+- [x] Avatar upload support (URL update and file upload endpoint implemented)
+- [x] Track last login, account status
+- [x] User role management
 
 ## 4. Task Management
-- Task entity, repository, service, controller
-- CRUD endpoints for tasks
-- Filtering, pagination, and sorting for task lists
-- Task status update endpoint
-- Support for sub-tasks, dependencies, recurring tasks
+- [x] Task entity, repository, service, controller
+- [x] CRUD endpoints for tasks
+- [x] Filtering, pagination, and sorting for task lists
+- [x] Task status update endpoint
+- [x] Support for sub-tasks, dependencies, recurring tasks
+
+> All core features implemented: CRUD, filtering, sub-tasks, dependencies, and DTO-based API.
+
 - Task templates and bulk operations
 - Attachment upload (file storage integration)
 - Tag/label management
 
 ## 5. Project Management
-- Project entity, repository, service, controller
-- CRUD endpoints for projects
-- Manage project members (add/remove)
-- Assign project owner
-- Track project status, dates, and team members
+- [x] Project entity, repository, service, controller
+- [x] CRUD endpoints for projects
+- [x] Manage project members (add/remove)
+- [x] Assign project owner
+- [x] Track project status, dates, and team members
+
+> All endpoints use DTOs, input validation, and RBAC security.
+
 
 ## 6. Team & Collaboration
-- Team entity, repository, service, controller
-- CRUD endpoints for teams
-- Manage team members (add/remove)
-- Comment entity and endpoints (task comments)
-- Notification entity and endpoints
-- Notification preferences
+- [x] Team entity, repository, service, controller
+- [x] CRUD endpoints for teams
+- [x] Manage team members (add/remove)
+- [x] Comment entity and endpoints (task comments)
+- [x] Notification entity and endpoints
+- [x] Notification preferences
+
+> All endpoints use DTOs, input validation, and RBAC security. Team & Collaboration module is complete.
 
 ## 7. Search & Filtering
-- Implement global search endpoint
-- Implement advanced task search (full-text, filters)
-- Support for filtering by status, priority, assignee, date, tags, etc.
+- [x] Implement global search endpoint
+- [x] Implement advanced task search (full-text, filters)
+- [x] Support for filtering by status, priority, assignee, date, tags, etc.
+
+> All endpoints support pagination, DTOs, input validation, and RBAC security. Advanced search supports status, priority, assignee, project, tags, and free-text.
 
 ## 8. Reports & Analytics
 - Productivity metrics endpoint
