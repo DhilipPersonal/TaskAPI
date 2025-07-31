@@ -1,0 +1,11 @@
+# Java/Spring Boot
+/target/
+/logs/
+*.log
+*.class
+*.jar
+*.war
+*.iml
+.idea/
+.vscode/
+.DS_Store
