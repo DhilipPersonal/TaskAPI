@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "projects", schema = "taskapp")
+@Table(name = "projects")
 public class Project {
     @Id
     @GeneratedValue

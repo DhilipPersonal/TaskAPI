@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "notification_preferences", schema = "taskapp")
+@Table(name = "notification_preferences")
 public class NotificationPreference {
     @Id
     private UUID userId;

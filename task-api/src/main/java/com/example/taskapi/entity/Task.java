@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tasks", schema = "taskapp")
+@Table(name = "tasks")
 public class Task {
     @Id
     @GeneratedValue
