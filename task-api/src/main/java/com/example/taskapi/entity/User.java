@@ -1,13 +1,13 @@
 package com.example.taskapi.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+
 import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", schema = "taskapp")
+@Table(name = "users")
 
 public class User {
     @Id

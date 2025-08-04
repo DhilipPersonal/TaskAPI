@@ -43,32 +43,18 @@ This file outlines all major tasks and sub-tasks required to implement the Task 
 - [ ] Set up Swagger/OpenAPI docs (next)
 
 ### Phase 1.2: Database Initialization
-- [ ] Set up PostgreSQL instance:
-    - Use Docker Compose for local development. Example service:
-      ```yaml
-      services:
-        db:
-          image: postgres:15
-          environment:
-            POSTGRES_DB: taskdb
-            POSTGRES_USER: taskuser
-            POSTGRES_PASSWORD: taskpass
-          ports:
-            - "5432:5432"
-          volumes:
-            - db-data:/var/lib/postgresql/data
-      volumes:
-        db-data:
-      ```
-    - Use environment variables for DB credentials in `application.properties`/`application.yml`.
-    - Recommended: Use a dedicated schema (e.g., `taskapp`).
-- [ ] Configure DB connection properties in Spring Boot config files for all environments.
+- [x] Set up PostgreSQL instance:
+    - [x] Use Docker Compose for local development with proper configuration
+    - [x] Use environment variables for DB credentials in `application.properties`/`application.yml`
+    - [x] Use default schema (public) instead of dedicated schema to avoid migration issues
+- [x] Configure DB connection properties in Spring Boot config files for all environments
 - [x] Set up Flyway migrations:
-    - [x] Place migration scripts in `src/main/resources/db/migration`.
-    - [x] Use semantic versioning for scripts (e.g., `V1__init.sql`, `V2__add_user_table.sql`).
-    - [x] Start with schema creation and base tables.
-- [x] Create initial migration scripts using Flyway.
-- [ ] Verify DB connectivity with a test entity/repository.
+    - [x] Place migration scripts in `src/main/resources/db/migration/postgres` and `db/migration/h2`
+    - [x] Use semantic versioning for scripts (e.g., `V1__init.sql`, `V2__add_lockout_fields.sql`)
+    - [x] Start with schema creation and base tables
+- [x] Create initial migration scripts using Flyway
+- [x] Configure Flyway repair options to fix checksum mismatches
+- [x] Verify DB connectivity with entity repositories
 
 ### Phase 1.3: Project Structure
 - [x] Create package structure (recommended):
@@ -98,6 +84,8 @@ This file outlines all major tasks and sub-tasks required to implement the Task 
 - [x] Create `.dockerignore` file
 - [x] Add Docker build profiles for different environments
 - [x] Create startup scripts for local development
+- [x] Fix Docker container startup issues
+- [x] Ensure proper port mapping (8080, 5433, 6379, 5050)
 
 ### Phase 1.5: Base Configuration
 - [x] Configure CORS settings
@@ -167,28 +155,33 @@ This file outlines all major tasks and sub-tasks required to implement the Task 
 > All endpoints support pagination, DTOs, input validation, and RBAC security. Advanced search supports status, priority, assignee, project, tags, and free-text.
 
 ## 8. Reports & Analytics
-- Productivity metrics endpoint
-- Project summary endpoint
-- Overdue tasks endpoint
-- Team workload endpoint
+- [x] Productivity metrics endpoint
+- [x] Project summary endpoint
+- [x] Overdue tasks endpoint
+- [x] Team workload endpoint
 
 ## 9. Technical & Security Tasks
-- Input validation and sanitization
-- Rate limiting (e.g., 100 requests/min)
-- SQL injection and XSS protection
-- API key management for integrations
-- Response caching for performance
-- Pagination for all list endpoints
-- Automated and manual testing (unit, integration, API)
-- CI/CD pipeline setup
-- Dockerization and deployment scripts
+- [x] Input validation and sanitization (DTOs, controller layer)
+- [ ] Rate limiting (e.g., 100 requests/min) _(TODO: Add Bucket4j or similar)_
+- [x] SQL injection and XSS protection (Spring Data JPA/DTO serialization)
+- [ ] API key management for integrations _(TODO: Add if integrating external APIs)_
+- [ ] Response caching for performance _(TODO: Use @Cacheable for analytics)_
+- [x] Pagination for all list endpoints
+- [ ] Automated and manual testing (unit, integration, API) _(TODO: Expand test coverage)_
+- [x] CI/CD pipeline setup
+- [x] Dockerization and deployment scripts
+- [x] Fix schema and migration issues in Docker setup
+- [x] Fix entity-database schema mismatches
+- [x] Configure Flyway repair options for migration checksum issues
 
 ## 10. Documentation & DevOps
-- API documentation (Swagger/OpenAPI)
-- Developer setup guide (README)
-- Postman collection for API testing
-- Environment variable management
-- Production deployment checklist
+- [ ] API documentation (Swagger/OpenAPI) _(TODO: Add Springdoc config)_
+- [x] Developer setup guide (README) _(Updated with project details and setup instructions)_
+- [ ] Postman collection for API testing _(TODO: Export and include)_
+- [x] Environment variable management
+- [ ] Production deployment checklist _(TODO: Finalize)_
+- [x] Git repository setup and organization
+- [x] Commit project with proper documentation
 
 ---
 

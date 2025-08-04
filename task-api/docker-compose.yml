@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: taskuser
       POSTGRES_PASSWORD: taskpass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
   redis:
@@ -17,11 +17,16 @@ services:
     volumes:
       - redis-data:/data
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/taskdb
+      SPRING_DATASOURCE_USERNAME: taskuser
+      SPRING_DATASOURCE_PASSWORD: taskpass
     depends_on:
       - db
       - redis
