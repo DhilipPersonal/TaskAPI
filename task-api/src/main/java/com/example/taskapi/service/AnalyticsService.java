@@ -8,6 +8,7 @@ import com.example.taskapi.repository.UserRepository;
 import com.example.taskapi.entity.Task;
 import com.example.taskapi.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ public class AnalyticsService {
     private UserRepository userRepository;
     
 
+    @Cacheable(value = "analytics", key = "'productivity-metrics'", unless = "#result == null")
     public ProductivityMetricsResponse getProductivityMetrics() {
         ProductivityMetricsResponse resp = new ProductivityMetricsResponse();
         resp.setCompletedTasks((int) taskRepository.findAll().stream().filter(t -> "COMPLETED".equals(t.getStatus())).count());
@@ -34,6 +36,7 @@ public class AnalyticsService {
         return resp;
     }
 
+    @Cacheable(value = "analytics", key = "'project-summary'", unless = "#result == null")
     public ProjectSummaryResponse getProjectSummary() {
         ProjectSummaryResponse resp = new ProjectSummaryResponse();
         resp.setTotalProjects((int) projectRepository.count());
@@ -48,6 +51,7 @@ public class AnalyticsService {
         return resp;
     }
 
+    @Cacheable(value = "analytics", key = "'overdue-tasks'", unless = "#result == null")
     public OverdueTasksResponse getOverdueTasks() {
         OverdueTasksResponse resp = new OverdueTasksResponse();
         java.util.List<Task> overdue = taskRepository.findAll().stream()
@@ -67,6 +71,7 @@ public class AnalyticsService {
         return resp;
     }
 
+    @Cacheable(value = "analytics", key = "'team-workload'", unless = "#result == null")
     public TeamWorkloadResponse getTeamWorkload() {
         TeamWorkloadResponse resp = new TeamWorkloadResponse();
         java.util.List<User> users = userRepository.findAll();

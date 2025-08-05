@@ -1,0 +1,21 @@
+[build]
+  publish = "target/"
+  command = "mvn clean package -DskipTests"
+
+[build.environment]
+  JAVA_VERSION = "21"
+  MAVEN_VERSION = "3.9.0"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[functions]
+  directory = "src/main/java"
+
+# For Spring Boot applications
+[dev]
+  command = "mvn spring-boot:run"
+  port = 8080
+  publish = "target/"

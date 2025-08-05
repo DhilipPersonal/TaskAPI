@@ -1,1 +1,4 @@
 /Users/dhilipelango/APITask/task-api/src/test/java/com/example/taskapi/repository/UserRepositoryTest.java
+/Users/dhilipelango/APITask/task-api/src/test/java/com/example/taskapi/security/JwtAuthenticationTest.java
+/Users/dhilipelango/APITask/task-api/src/test/java/com/example/taskapi/service/RateLimitServiceTest.java
+/Users/dhilipelango/APITask/task-api/src/test/java/com/example/taskapi/service/TokenBlacklistServiceTest.java

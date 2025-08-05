@@ -1,1 +1,4 @@
+com/example/taskapi/security/JwtAuthenticationTest.class
+com/example/taskapi/service/TokenBlacklistServiceTest.class
+com/example/taskapi/service/RateLimitServiceTest.class
 com/example/taskapi/repository/UserRepositoryTest.class

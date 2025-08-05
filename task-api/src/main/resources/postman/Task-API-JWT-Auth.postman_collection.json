@@ -1,0 +1,440 @@
+{
+	"info": {
+		"_postman_id": "f5a7e3b0-1f5d-4b2e-9a8c-d5f6e8a9b0c1",
+		"name": "Task API - JWT Authentication",
+		"description": "Collection for testing JWT authentication in Task API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with admin credentials to get JWT tokens"
+					},
+					"response": []
+				},
+				{
+					"name": "Login (User)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user\",\n    \"password\": \"user123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with regular user credentials to get JWT tokens"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Use refresh token to get a new access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"newuser\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"Password123!\",\n    \"firstName\": \"New\",\n    \"lastName\": \"User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for authentication and token management"
+		},
+		{
+			"name": "Test Endpoints",
+			"item": [
+				{
+					"name": "Public Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test/public",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"public"
+							]
+						},
+						"description": "Public endpoint that doesn't require authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "Protected Endpoint",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test/protected",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"protected"
+							]
+						},
+						"description": "Protected endpoint that requires authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Endpoint",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test/admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"admin"
+							]
+						},
+						"description": "Admin endpoint that requires ADMIN role"
+					},
+					"response": []
+				},
+				{
+					"name": "User Endpoint",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/test/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"user"
+							]
+						},
+						"description": "User endpoint that requires USER role"
+					},
+					"response": []
+				}
+			],
+			"description": "Test endpoints with different authorization requirements"
+		},
+		{
+			"name": "Admin Operations",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"users"
+							]
+						},
+						"description": "Get all users (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get user by ID (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Delete user by ID (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "System Health",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/system/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"system",
+								"health"
+							]
+						},
+						"description": "Check system health (admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin-only operations"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Automatically extract and save tokens from login response",
+					"if (pm.response.code === 200 && pm.request.url.toString().includes('/api/v1/auth/login')) {",
+					"    const responseJson = pm.response.json();",
+					"    if (responseJson.accessToken) {",
+					"        pm.environment.set('access_token', responseJson.accessToken);",
+					"        console.log('Access token saved to environment');",
+					"    }",
+					"    if (responseJson.refreshToken) {",
+					"        pm.environment.set('refresh_token', responseJson.refreshToken);",
+					"        console.log('Refresh token saved to environment');",
+					"    }",
+					"    if (responseJson.username) {",
+					"        pm.environment.set('username', responseJson.username);",
+					"    }",
+					"}",
+					"",
+					"// Extract and save tokens from refresh response",
+					"if (pm.response.code === 200 && pm.request.url.toString().includes('/api/v1/auth/refresh')) {",
+					"    const responseJson = pm.response.json();",
+					"    if (responseJson.accessToken) {",
+					"        pm.environment.set('access_token', responseJson.accessToken);",
+					"        console.log('New access token saved from refresh');",
+					"    }",
+					"}",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

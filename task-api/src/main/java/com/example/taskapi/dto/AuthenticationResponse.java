@@ -1,15 +1,15 @@
 package com.example.taskapi.dto;
 
-public class AuthenticationResponse {
-    private String accessToken;
-    private String refreshToken;
-
+/**
+ * @deprecated Use {@link AuthResponse} instead
+ */
+@Deprecated
+public class AuthenticationResponse extends AuthResponse {
     public AuthenticationResponse(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+        super(accessToken, refreshToken, null, null);
     }
-    public String getAccessToken() { return accessToken; }
-    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
-    public String getRefreshToken() { return refreshToken; }
-    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+    
+    public AuthenticationResponse(String accessToken, String refreshToken, String username, String role) {
+        super(accessToken, refreshToken, username, role);
+    }
 }

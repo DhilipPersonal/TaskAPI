@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskapi-postgres
+    environment:
+      POSTGRES_DB: taskapi
+      POSTGRES_USER: taskapi
+      POSTGRES_PASSWORD: taskapi123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taskapi-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: taskapi-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - taskapi-network
+
+  taskapi:
+    build:
+      context: ./task-api
+      dockerfile: Dockerfile
+    container_name: taskapi-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taskapi
+      SPRING_DATASOURCE_USERNAME: taskapi
+      SPRING_DATASOURCE_PASSWORD: taskapi123
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - taskapi-network
+
+volumes:
+  postgres_data:
+
+networks:
+  taskapi-network:
+    driver: bridge

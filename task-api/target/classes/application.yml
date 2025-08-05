@@ -9,6 +9,9 @@ spring:
     validate-on-migrate: false
     repair-on-migrate: true
 
+app:
+  jwtSecret: "your-very-secure-and-long-secret-key-should-be-at-least-64-characters-long"
+
 server:
   port: 8080
 

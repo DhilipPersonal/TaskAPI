@@ -1,0 +1,151 @@
+package com.example.taskapi.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.Date;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class JwtUtilTest {
+
+    private JwtUtil jwtUtil;
+    private final String testSecret = "thisIsAVeryLongSecretKeyForTestingPurposesOnly12345678901234567890";
+    private final long accessTokenExpirationMs = 900000; // 15 minutes
+    private final long refreshTokenExpirationMs = 604800000; // 7 days
+
+    @BeforeEach
+    void setUp() {
+        jwtUtil = new JwtUtil();
+        ReflectionTestUtils.setField(jwtUtil, "jwtSecret", testSecret);
+        ReflectionTestUtils.setField(jwtUtil, "accessTokenExpirationMs", accessTokenExpirationMs);
+        ReflectionTestUtils.setField(jwtUtil, "refreshTokenExpirationMs", refreshTokenExpirationMs);
+    }
+
+    @Test
+    void testGenerateAccessToken() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        
+        // Act
+        String token = jwtUtil.generateAccessToken(username, role);
+        
+        // Assert
+        assertNotNull(token);
+        assertTrue(jwtUtil.validateToken(token));
+        assertEquals(username, jwtUtil.getUsernameFromToken(token));
+        assertEquals(role, jwtUtil.getRoleFromToken(token));
+        assertEquals(JwtUtil.TokenType.ACCESS, jwtUtil.getTokenTypeFromToken(token));
+    }
+
+    @Test
+    void testGenerateRefreshToken() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        String jti = UUID.randomUUID().toString();
+        
+        // Act
+        String token = jwtUtil.generateRefreshToken(username, role, jti);
+        
+        // Assert
+        assertNotNull(token);
+        assertTrue(jwtUtil.validateToken(token));
+        assertEquals(username, jwtUtil.getUsernameFromToken(token));
+        assertEquals(role, jwtUtil.getRoleFromToken(token));
+        assertEquals(JwtUtil.TokenType.REFRESH, jwtUtil.getTokenTypeFromToken(token));
+        assertEquals(jti, jwtUtil.getJtiFromToken(token));
+    }
+
+    @Test
+    void testTokenExpiration() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        String jti = UUID.randomUUID().toString();
+        
+        // Create token with custom expiration
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("role", role);
+        claims.put("type", JwtUtil.TokenType.ACCESS.name());
+        claims.setId(jti);
+        claims.setIssuedAt(new Date());
+        claims.setExpiration(new Date(System.currentTimeMillis() - 1000)); // Expired token
+        
+        String expiredToken = Jwts.builder()
+                .setClaims(claims)
+                .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(testSecret.getBytes()))
+                .compact();
+        
+        // Act & Assert
+        assertFalse(jwtUtil.validateToken(expiredToken));
+    }
+
+    @Test
+    void testTokenTypeDifferentiation() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        String jti = UUID.randomUUID().toString();
+        
+        // Act
+        String accessToken = jwtUtil.generateAccessToken(username, role);
+        String refreshToken = jwtUtil.generateRefreshToken(username, role, jti);
+        
+        // Assert
+        assertEquals(JwtUtil.TokenType.ACCESS, jwtUtil.getTokenTypeFromToken(accessToken));
+        assertEquals(JwtUtil.TokenType.REFRESH, jwtUtil.getTokenTypeFromToken(refreshToken));
+        assertNotEquals(accessToken, refreshToken);
+    }
+
+    @Test
+    void testInvalidToken() {
+        // Arrange
+        String invalidToken = "invalid.token.string";
+        
+        // Act & Assert
+        assertFalse(jwtUtil.validateToken(invalidToken));
+    }
+
+    @Test
+    void testAccessTokenExpiration() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        
+        // Act
+        String token = jwtUtil.generateAccessToken(username, role);
+        Date expiration = jwtUtil.getExpirationDateFromToken(token);
+        
+        // Assert
+        long expectedExpiration = System.currentTimeMillis() + accessTokenExpirationMs;
+        long actualExpiration = expiration.getTime();
+        
+        // Allow 1 second tolerance for test execution time
+        assertTrue(Math.abs(expectedExpiration - actualExpiration) < 1000);
+    }
+
+    @Test
+    void testRefreshTokenExpiration() {
+        // Arrange
+        String username = "testuser";
+        String role = "USER";
+        String jti = UUID.randomUUID().toString();
+        
+        // Act
+        String token = jwtUtil.generateRefreshToken(username, role, jti);
+        Date expiration = jwtUtil.getExpirationDateFromToken(token);
+        
+        // Assert
+        long expectedExpiration = System.currentTimeMillis() + refreshTokenExpirationMs;
+        long actualExpiration = expiration.getTime();
+        
+        // Allow 1 second tolerance for test execution time
+        assertTrue(Math.abs(expectedExpiration - actualExpiration) < 1000);
+    }
+}

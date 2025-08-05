@@ -6,18 +6,17 @@ import com.example.taskapi.dto.ResetPasswordRequest;
 import com.example.taskapi.dto.UserRoleChangeRequest;
 
 import com.example.taskapi.dto.UserRegistrationRequest;
-import com.example.taskapi.dto.AuthenticationRequest;
-import com.example.taskapi.dto.AuthenticationResponse;
 import com.example.taskapi.entity.User;
 import com.example.taskapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
 
@@ -26,17 +25,46 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationRequest request) {
-        User user = userService.registerUser(request);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    @PostMapping("/test-json")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<String> testJson(@RequestBody UserRegistrationRequest request) {
+        return ResponseEntity.ok("Received: " + request.getUsername() + ", " + request.getEmail());
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
-        AuthenticationResponse response = userService.authenticate(request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @PostMapping("/test-register")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> testRegister(@RequestBody UserRegistrationRequest request) {
+        try {
+            UserProfileResponse userProfile = userService.registerUserAndGetProfile(request);
+            return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Registration Error: " + e.getMessage());
+        }
     }
+
+    @PostMapping("/register")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest request) {
+        try {
+            UserProfileResponse userProfile = userService.registerUserAndGetProfile(request);
+            return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/create")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> createNewUser(@RequestBody UserRegistrationRequest request) {
+        try {
+            UserProfileResponse userProfile = userService.registerUserAndGetProfile(request);
+            return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // Login endpoint moved to AuthController
 
     // Get current user profile
     @GetMapping("/me")

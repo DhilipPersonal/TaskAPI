@@ -3,9 +3,11 @@ package com.example.taskapi.service;
 import java.util.UUID;
 
 import com.example.taskapi.dto.UserRegistrationRequest;
-import com.example.taskapi.dto.AuthenticationRequest;
-import com.example.taskapi.dto.AuthenticationResponse;
+import com.example.taskapi.dto.UserProfileResponse;
+import com.example.taskapi.dto.AuthRequest;
+import com.example.taskapi.dto.AuthResponse;
 import com.example.taskapi.entity.User;
+import com.example.taskapi.model.RefreshToken;
 import com.example.taskapi.repository.UserRepository;
 import com.example.taskapi.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,12 +86,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -106,6 +110,8 @@ private final JwtUtil jwtUtil;
         User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role("USER")
                 .accountStatus("active")
@@ -115,12 +121,34 @@ private final JwtUtil jwtUtil;
         return userRepository.save(user);
     }
 
+    @Transactional
+    public UserProfileResponse registerUserAndGetProfile(UserRegistrationRequest request) {
+        User user = registerUser(request);
+        return convertToUserProfileResponse(user);
+    }
+
+    private UserProfileResponse convertToUserProfileResponse(User user) {
+        UserProfileResponse response = new UserProfileResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setAvatarUrl(user.getAvatarUrl());
+        response.setRole(user.getRole());
+        response.setAccountStatus(user.getAccountStatus());
+        response.setLastLogin(user.getLastLogin());
+        response.setCreatedAt(user.getCreatedAt());
+        response.setUpdatedAt(user.getUpdatedAt());
+        return response;
+    }
+
     private boolean isPasswordStrong(String password) {
         // At least 8 chars, 1 upper, 1 lower, 1 digit
         return password != null && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthResponse authenticate(AuthRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
         
@@ -146,8 +174,14 @@ private final JwtUtil jwtUtil;
         user.setLockoutUntil(null);
         user.setLastLogin(java.time.LocalDateTime.now());
         userRepository.save(user);
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        String refreshToken = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new AuthenticationResponse(accessToken, refreshToken);
+        
+        // Create refresh token in database
+        RefreshToken refreshTokenEntity = refreshTokenService.createRefreshToken(user.getUsername());
+        
+        // Generate JWT tokens
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getRole());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getRole(), refreshTokenEntity.getJti());
+        
+        return new AuthResponse(accessToken, refreshToken, user.getUsername(), user.getRole());
     }
 }
